@@ -6,17 +6,20 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
+import { useContext } from "react";
+import Context from "./Context.js";
 
 export default function Login({setToken}){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [Loading, setLoading] = useState(false);
-
+    const {setPerfil} = useContext(Context);
     const navigate = useNavigate();
 
 
     function MakeLogin(event){
         setLoading(true);
+        
 
         event.preventDefault();
         const requisicao = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", {
@@ -24,10 +27,11 @@ export default function Login({setToken}){
 			password: password
 		});
 
-        requisicao.then((r)=> {setToken(r.data.token);navigate("/hoje")});
+        requisicao.then((r)=> {setToken(r.data.token);setPerfil(r.data.image);navigate("/hoje")});
         requisicao.catch((e)=>{alert("Login ou senha não correspondem, tente novamente.");
         setLoading(false);})
-     
+
+
 
     }
 
