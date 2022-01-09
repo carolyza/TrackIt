@@ -27,6 +27,7 @@ export default function Habits() {
     { day: "S", selected: false, index: 5 },
     { day: "S", selected: false, index: 6 },
   ]);
+  const [selecteds, setSelecteds] = useState([]);
 
   function renderHabits() {
     const requisicao = axios.get(
@@ -49,6 +50,17 @@ export default function Habits() {
 
   function Cancel() {
     setNotask("hidden");
+  }
+
+  function CountDays(selectedDay) {
+    const day = week.find((current) => selectedDay === current);
+    day.selected = !day.selected;
+    if (!selecteds.includes(selectedDay.index)) {
+      setSelecteds([...selecteds, selectedDay.index]);
+    } else {
+      setSelecteds(selecteds.filter((i) => i !== selectedDay.index));
+    }
+    setWeek([...week]);
   }
 
   return (
@@ -74,7 +86,7 @@ export default function Habits() {
                   <Days
                     key={index}
                     selected={day.selected}
-                    // onClick={() => CountDays(day)}
+                    onClick={() => CountDays(day)}
                     type="button"
                     disabled={Loading}
                   >
@@ -213,7 +225,6 @@ const Days = styled.button`
   left: 36px;
   top: 218px;
   border-radius: 5px;
-  background: #ffffff;
   border: 1px solid #d4d4d4;
   font-family: Lexend Deca;
   font-size: 20px;
@@ -222,7 +233,8 @@ const Days = styled.button`
   line-height: 25px;
   letter-spacing: 0em;
   text-align: left;
-  color: #dbdbdb;
+  color: ${(props) => (props.selected ? "#FFFFFF" : "#DBDBDB")};
+  background: ${(props) => (props.selected ? "#CFCFCF" : "#FFFFFF")};
 `;
 
 const Footer = styled.div`
@@ -277,8 +289,6 @@ const Main = styled.div`
   border-radius: 5px;
   background: #ffffff;
   display: flex;
-  /* justify-content: center;
-  align-items: center; */
   flex-direction: column;
 
   .hidden {
