@@ -1,16 +1,17 @@
 import React from "react";
 import { useContext } from "react";
 import styled from "styled-components";
-import TopLogo from "./logos/Trackit.png";
+import TopLogo from "./logos/trackit.png";
 import UserContext from "./Context.js";
 
 export default function Top() {
-  const { Perfil } = useContext(UserContext);
+  const { perfil } = useContext(UserContext);
+  console.log(perfil);
   return (
     <>
       <Header>
-        <TopLogo />
-        <Imagem src={Perfil}></Imagem>
+        <Img src={TopLogo} />
+        <Imagem src={perfil}></Imagem>
       </Header>
     </>
   );
@@ -31,7 +32,13 @@ const Header = styled.div`
 const Imagem = styled.img`
   height: 51px;
   width: 51px;
-  left: 306px;
   top: 9px;
   border-radius: 98.5px;
+  position: fixed;
+  right: 18px;
+`;
+
+const Img = styled.img`
+  position: fixed;
+  left: 18px;
 `;

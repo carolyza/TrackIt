@@ -10,12 +10,12 @@ import History from "./History.js";
 
 export default function App() {
   const [token, setToken] = useState("");
-  const [Perfil, setPerfil] = useState("");
+  const [perfil, setPerfil] = useState("");
   const [Goal, setGoal] = useState("");
 
   return (
     <UserContext.Provider
-      value={{ Perfil, Goal, token, setPerfil, setToken, setGoal }}
+      value={{ perfil, Goal, token, setPerfil, setToken, setGoal }}
     >
       <BrowserRouter>
         <Routes>
