@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +29,28 @@ export default function Habits() {
   ]);
   const [selecteds, setSelecteds] = useState([]);
 
+  useEffect(() => {
+    renderHabits();
+  }, []);
+
+  function CheckNull() {
+    if (habit == []) {
+      setNohabit("");
+    }
+  }
+
+  function Delete(id) {
+    const promise = axios.delete(
+      `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`,
+      auth
+    );
+
+    if (window.confirm("Tem certeza que deseja deletar?")) {
+      promise.then(() => renderHabits());
+      promise.catch((e) => alert(e.response.data.message));
+    }
+  }
+
   function renderHabits() {
     const requisicao = axios.get(
       "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
@@ -36,7 +58,7 @@ export default function Habits() {
     );
     requisicao.then((r) => {
       setHabit(r.data);
-      setNohabit("");
+      CheckNull();
     });
     requisicao.catch((e) => {
       console.log(e.response);
@@ -61,6 +83,32 @@ export default function Habits() {
       setSelecteds(selecteds.filter((i) => i !== selectedDay.index));
     }
     setWeek([...week]);
+  }
+
+  function CreateNew() {
+    setLoading(true);
+    // event.preventDefault();
+
+    const promise = axios.post(
+      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
+      {
+        name: name,
+        days: selecteds,
+      },
+      auth
+    );
+
+    promise.then((r) => {
+      renderHabits();
+      setLoading(false);
+      alert("deu certo rapaz");
+      setNohabit("hidden");
+      setNotask("hidden");
+    });
+    promise.catch((e) => {
+      alert(e.response.data.message);
+      setLoading(false);
+    });
   }
 
   return (
@@ -99,7 +147,11 @@ export default function Habits() {
                 <ButtonCancel onClick={() => Cancel()} disabled={Loading}>
                   Cancelar
                 </ButtonCancel>
-                <ButtonSave type="submit" disabled={Loading}>
+                <ButtonSave
+                  type="submit"
+                  disabled={Loading}
+                  onClick={() => CreateNew()}
+                >
                   {Loading ? (
                     <Loader
                       type="ThreeDots"
@@ -115,10 +167,35 @@ export default function Habits() {
               </Footer>
             </Main>
           </form>
-          <h1 className={nohabit}>
-            Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para
-            começar a trackear!
-          </h1>
+
+          {habit.length === 0 ? (
+            <h1 className={nohabit}>
+              Você não tem nenhum hábito cadastrado ainda. Adicione um hábito
+              para começar a trackear!
+            </h1>
+          ) : (
+            habit.map((h) => (
+              <Habit key={h.id}>
+                <HeadHabit>
+                  <p>{h.name}</p>
+                  <ion-icon
+                    onClick={() => Delete(h.id)}
+                    name="trash-outline"
+                  ></ion-icon>
+                </HeadHabit>
+                <DayList>
+                  {week.map((day, index) => (
+                    <DayBox
+                      key={index}
+                      selected={h.days.includes(index) ? true : false}
+                    >
+                      {day.day}
+                    </DayBox>
+                  ))}
+                </DayList>
+              </Habit>
+            ))
+          )}
         </List>
       </Container>
       <Bottom />
@@ -126,9 +203,69 @@ export default function Habits() {
   );
 }
 
+const HeadHabit = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  ion-icon {
+    font-size: 15px;
+    margin-top: 11px;
+    margin-right: 10px;
+  }
+`;
+
+const Habit = styled.div`
+  margin-top: 20px;
+  height: 91px;
+  width: 100%;
+  top: 147px;
+  border-radius: 5px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+
+  p {
+    margin-left: 15px;
+    margin-top: 13px;
+    margin-bottom: 8px;
+    font-family: Lexend Deca;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #666666;
+  }
+`;
+
+const DayList = styled.div`
+  display: flex;
+  margin-left: 15px;
+  gap: 4px;
+`;
+const DayBox = styled.div`
+  height: 30px;
+  width: 30px;
+  left: 36px;
+  top: 218px;
+  border-radius: 5px;
+  border: 1px solid #d4d4d4;
+  font-family: Lexend Deca;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 25px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: ${(props) => (props.selected ? "#FFFFFF" : "#DBDBDB")};
+  background: ${(props) => (props.selected ? "#CFCFCF" : "#FFFFFF")};
+`;
+
 const Container = styled.div`
   margin-top: 70px;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: #e5e5e5;
@@ -176,6 +313,7 @@ const Headlist = styled.div`
 const List = styled.div`
   margin-left: 17px;
   margin-right: 18px;
+  margin-bottom: 106px;
   h1 {
     margin-top: 28px;
     font-family: Lexend Deca;
@@ -211,7 +349,7 @@ const Input = styled.input`
   line-height: 25px;
   letter-spacing: 0em;
   text-align: left;
-  color: #dbdbdb;
+  color: #666666; ;
 `;
 
 const AllDays = styled.div`

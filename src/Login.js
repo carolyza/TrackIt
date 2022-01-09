@@ -16,7 +16,7 @@ export default function Login() {
   const { setPerfil, setToken } = useContext(Context);
 
   const navigate = useNavigate();
-  console.log(setToken);
+
   function MakeLogin(event) {
     setLoading(true);
 

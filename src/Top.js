@@ -6,7 +6,6 @@ import UserContext from "./Context.js";
 
 export default function Top() {
   const { perfil } = useContext(UserContext);
-  console.log(perfil);
   return (
     <>
       <Header>
@@ -27,6 +26,7 @@ const Header = styled.div`
   top: 0px;
   background: #126ba5;
   box-shadow: 0px 4px 4px 0px #00000026;
+  z-index: 19999;
 `;
 
 const Imagem = styled.img`
