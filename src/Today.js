@@ -41,7 +41,6 @@ export default function Today() {
     requisicao.catch((e) => {
       console.log(e.response);
     });
-    console.log(Goal);
   }
 
   function ChangeGoal(habit) {

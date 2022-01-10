@@ -63,7 +63,6 @@ export default function Habits() {
     requisicao.catch((e) => {
       console.log(e.response);
       setNohabit("hidden");
-      console.log(auth);
     });
   }
 
@@ -72,7 +71,6 @@ export default function Habits() {
   }
 
   function Cancel() {
-    renderHabits();
     setNotask("hidden");
   }
 
@@ -102,7 +100,6 @@ export default function Habits() {
     promise.then((r) => {
       renderHabits();
       setLoading(false);
-      alert("deu certo rapaz");
       setNohabit("hidden");
       setNotask("hidden");
     });
@@ -145,7 +142,11 @@ export default function Habits() {
               </AllDays>
 
               <Footer>
-                <ButtonCancel onClick={() => Cancel()} disabled={Loading}>
+                <ButtonCancel
+                  type="button"
+                  onClick={() => Cancel()}
+                  disabled={Loading}
+                >
                   Cancelar
                 </ButtonCancel>
                 <ButtonSave
