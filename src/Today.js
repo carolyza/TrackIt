@@ -106,8 +106,24 @@ export default function Today() {
             <HabitBox key={h.id}>
               <HabContainer>
                 <h2>{h.name}</h2>
-                <p>Sequência atual: {h.currentSequence} dias</p>
-                <p>Seu recorde: {h.highestSequence} dias</p>
+                <p>
+                  Sequência atual:{" "}
+                  <span className={h.done ? "recorde" : ""}>
+                    {h.currentSequence} dias{" "}
+                  </span>
+                </p>
+                <p>
+                  Seu recorde:{" "}
+                  <span
+                    className={
+                      h.currentSequence === h.highestSequence && h.done
+                        ? "recorde"
+                        : ""
+                    }
+                  >
+                    {h.highestSequence} dias
+                  </span>
+                </p>
               </HabContainer>
               <CheckBox onClick={() => DoneHabit(h.id, h.done)} check={h.done}>
                 <img src={Image} />
@@ -160,6 +176,9 @@ const HabContainer = styled.div`
     letter-spacing: 0em;
     text-align: left;
     color: #666666;
+  }
+  .recorde {
+    color: #8fc549;
   }
 `;
 

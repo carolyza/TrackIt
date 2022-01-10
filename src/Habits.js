@@ -63,6 +63,7 @@ export default function Habits() {
     requisicao.catch((e) => {
       console.log(e.response);
       setNohabit("hidden");
+      console.log(auth);
     });
   }
 
@@ -71,6 +72,7 @@ export default function Habits() {
   }
 
   function Cancel() {
+    renderHabits();
     setNotask("hidden");
   }
 
@@ -87,7 +89,6 @@ export default function Habits() {
 
   function CreateNew() {
     setLoading(true);
-    // event.preventDefault();
 
     const promise = axios.post(
       "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
