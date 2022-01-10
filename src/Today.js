@@ -23,6 +23,7 @@ export default function Today() {
     "Sexta",
     "Sábado",
   ];
+  const [finish, setFinish] = useState([]);
 
   useEffect(() => {
     renderHabits();
@@ -35,14 +36,51 @@ export default function Today() {
     );
     requisicao.then((r) => {
       setHabit(r.data);
+      setGoal(() => ChangeGoal(r.data));
     });
     requisicao.catch((e) => {
       console.log(e.response);
     });
+    console.log(Goal);
   }
 
-  function DoneHabit() {
-    console.log(habit);
+  function ChangeGoal(habit) {
+    let complete = 0;
+    for (let i = 0; i < habit.length; i++) {
+      if (habit[i].done) {
+        complete++;
+      }
+    }
+    const total = ((complete * 100) / habit.length).toFixed();
+    return total;
+  }
+
+  function CheckHabit(id) {
+    if (!finish.includes(id)) {
+      setFinish([...finish, id]);
+    } else {
+      setFinish(finish.filter((i) => i !== id));
+    }
+  }
+
+  function DoneHabit(id, done) {
+    if (!done) {
+      const promise = axios.post(
+        `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`,
+        !done,
+        auth
+      );
+      promise.then(renderHabits, CheckHabit(id));
+      promise.catch((e) => alert(e.response.data.message));
+    } else {
+      const promise = axios.post(
+        `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`,
+        !done,
+        auth
+      );
+      promise.then(renderHabits, CheckHabit(id));
+      promise.catch((e) => alert(e.response.data.message));
+    }
   }
 
   return (
@@ -57,8 +95,8 @@ export default function Today() {
               ? `0${dayjs().month() + 1}`
               : dayjs().month() + 1}
           </h1>
-          <Message>
-            {habit.length !== 0
+          <Message Goal={Goal}>
+            {Goal > 0
               ? `${Goal}% dos hábitos concluídos`
               : "Nenhum hábito concluído ainda"}
           </Message>
@@ -131,6 +169,7 @@ const CheckBox = styled.button`
   border-radius: 5px;
   border: none;
   margin-right: 13px;
+  background: ${(props) => (props.check ? "#8FC549" : "#EBEBEB")};
 `;
 
 const Container = styled.div`
@@ -165,5 +204,5 @@ const Message = styled.div`
   line-height: 22px;
   letter-spacing: 0em;
   text-align: left;
-  color: #bababa;
+  color: ${(props) => (props.Goal > 0 ? "#8FC549" : "#BABABA")};
 `;
